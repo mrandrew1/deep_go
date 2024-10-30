@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"unsafe"
+)
 
 const (
 	OpenModeIn     = 1 // 0000 0001
@@ -28,9 +32,18 @@ func Open(filename string, mask int8) {
 
 	// implementation...
 }
-
 func main() {
-	Open("data.bin", OpenModeIn|OpenModeBinary) // 0000 1001
-	Open("data.bin", OpenModeIn|OpenModeOut)    // 0000 0011
-	Open("data.bin", OpenModeAppend)            // 0000 0100
+	var number uint32 = 0xFFCCDDAA
+	result := ToLittleEndian(number)
+	fmt.Println(`result`)
+	fmt.Println(strconv.FormatInt(int64(result), 16))
+}
+
+func ToLittleEndian(number uint32) uint32 {
+	pointer := unsafe.Pointer(&number)
+	// pointer2 := unsafe.Add(pointer, 1)
+	// pointer3 := unsafe.Add(pointer, 2)
+	// pointer4 := unsafe.Add(pointer, 3)
+	fmt.Println(strconv.FormatInt(int64(uint32(*(*uint8)(unsafe.Add(pointer, 2)))<<8), 16))
+	return uint32(*(*uint8)(unsafe.Add(pointer, 3))) | uint32(*(*uint8)(unsafe.Add(pointer, 2)))<<8 | uint32(*(*uint8)(unsafe.Add(pointer, 1)))<<16 | uint32(*(*uint8)(pointer))<<24
 }
