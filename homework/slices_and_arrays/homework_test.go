@@ -10,36 +10,81 @@ import (
 // go test -v homework_test.go
 
 type CircularQueue struct {
-	values []int
-	// need to implement
+	values   []int
+	firstIdx int
+	lastIdx  int
+	count    int
 }
 
 func NewCircularQueue(size int) CircularQueue {
-	return CircularQueue{} // need to implement
+	return CircularQueue{
+		values:   make([]int, size),
+		firstIdx: 0,
+		lastIdx:  size,
+		count:    0,
+	}
+}
+
+func (q *CircularQueue) increaseLastIdx() {
+	if q.lastIdx >= cap(q.values)-1 {
+		q.lastIdx = 0
+	} else {
+		q.lastIdx++
+	}
+}
+
+func (q *CircularQueue) increaseFirstIdx() {
+	if q.firstIdx >= cap(q.values)-1 {
+		q.firstIdx = 0
+	} else {
+		q.firstIdx++
+	}
 }
 
 func (q *CircularQueue) Push(value int) bool {
-	return false // need to implement
+	if q.count == cap(q.values) {
+		return false
+	}
+	q.increaseLastIdx()
+	q.values[q.lastIdx] = value
+	q.count++
+
+	return true
 }
 
 func (q *CircularQueue) Pop() bool {
-	return false // need to implement
+	if q.count == 0 {
+		return false
+	}
+
+	q.values[q.firstIdx] = 0
+	q.count--
+	q.increaseFirstIdx()
+
+	return true
 }
 
 func (q *CircularQueue) Front() int {
-	return -1 // need to implement
+	if q.Empty() {
+		return -1
+	}
+
+	return q.values[q.firstIdx]
 }
 
 func (q *CircularQueue) Back() int {
-	return -1 // need to implement
+	if q.Empty() {
+		return -1
+	}
+	return q.values[q.lastIdx]
 }
 
 func (q *CircularQueue) Empty() bool {
-	return false // need to implement
+	return q.count == 0
 }
 
 func (q *CircularQueue) Full() bool {
-	return false // need to implement
+	return q.count == cap(q.values)
 }
 
 func TestCircularQueue(t *testing.T) {
