@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// go test -v homework_test.go
+// // go test -v homework_test.go
 
 type CircularQueue struct {
 	values   []int
@@ -20,35 +20,27 @@ func NewCircularQueue(size int) CircularQueue {
 	return CircularQueue{
 		values:   make([]int, size),
 		firstIdx: 0,
-		lastIdx:  size,
+		lastIdx:  0,
 		count:    0,
 	}
 }
 
 func (q *CircularQueue) increaseLastIdx() {
-	if q.lastIdx >= cap(q.values)-1 {
-		q.lastIdx = 0
-	} else {
-		q.lastIdx++
-	}
+	q.lastIdx = (q.lastIdx + 1) % cap(q.values)
 }
 
 func (q *CircularQueue) increaseFirstIdx() {
-	if q.firstIdx >= cap(q.values)-1 {
-		q.firstIdx = 0
-	} else {
-		q.firstIdx++
-	}
+	q.firstIdx = (q.firstIdx + 1) % cap(q.values)
 }
 
 func (q *CircularQueue) Push(value int) bool {
 	if q.count == cap(q.values) {
 		return false
 	}
-	q.increaseLastIdx()
+
 	q.values[q.lastIdx] = value
 	q.count++
-
+	q.increaseLastIdx()
 	return true
 }
 
@@ -57,7 +49,6 @@ func (q *CircularQueue) Pop() bool {
 		return false
 	}
 
-	q.values[q.firstIdx] = 0
 	q.count--
 	q.increaseFirstIdx()
 
@@ -76,7 +67,10 @@ func (q *CircularQueue) Back() int {
 	if q.Empty() {
 		return -1
 	}
-	return q.values[q.lastIdx]
+	if q.lastIdx == 0 {
+		return q.values[cap(q.values)-1]
+	}
+	return q.values[q.lastIdx-1]
 }
 
 func (q *CircularQueue) Empty() bool {
