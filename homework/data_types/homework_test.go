@@ -62,7 +62,7 @@ func BenchmarkToLittleEndian3(b *testing.B) {
 	}
 }
 
-func TestSerializationProperties(t *testing.T) {
+func TestСonversion(t *testing.T) {
 	tests := map[string]struct {
 		number uint32
 		result uint32
